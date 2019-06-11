@@ -1,10 +1,36 @@
+package org.sentilo.samples.controller;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.sentilo.common.domain.AuthorizedProvider;
+import org.sentilo.common.domain.CatalogComponent;
+import org.sentilo.common.domain.CatalogSensor;
+import org.sentilo.platform.client.core.PlatformTemplate;
+import org.sentilo.platform.client.core.domain.CatalogInputMessage;
+import org.sentilo.platform.client.core.domain.CatalogOutputMessage;
+import org.sentilo.platform.client.core.domain.DataInputMessage;
+import org.sentilo.platform.client.core.domain.Observation;
+import org.sentilo.platform.client.core.domain.SensorObservations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 /**
  * SamplesController
- *
- * Executes a basic Sentilo Java Client Platform example which connects to the server and publish some data to a sample sensor.
+ * 
+ * Executes a basic Sentilo Java Client Platform example that connects to the server and publishes some data to a sample sensor.
  * In this case we're getting info from the system with the runtime properties object
- *
- * @author openTrends
+ * 
  */
 @Controller
 public class SamplesController {
@@ -12,8 +38,6 @@ public class SamplesController {
   private final Logger logger = LoggerFactory.getLogger(SamplesController.class);
 
   private static final String VIEW_SAMPLES_RESPONSE = "samples";
-
-  private static final int SLEEP_TIME = 1;
 
   @Autowired
   private PlatformTemplate platformTemplate;
@@ -24,9 +48,9 @@ public class SamplesController {
   @RequestMapping(value = {"/", "/home"})
   public String runSamples(final Model model) {
 
-    // All this data must be created in the Catalog Application before starting this
-    // sample execution. At least the identity key and the provider id must be
-    // declared in the system
+    // All this data must be created in the Catalog Application before start this
+    // sample execution. At least the application identity token id and the provider id must be
+    // declared in system twice
     String restClientIdentityKey = samplesProperties.getProperty("rest.client.identityKey");
     String providerId = samplesProperties.getProperty("rest.client.provider");
 
@@ -97,9 +121,9 @@ public class SamplesController {
 
   /**
    * Retrieve catalog information about the sample provider. If the component and/or sensor doesn't
-   * exists, it will create them
-   *
-   * @param identityToken Sample identity token
+   * exists, then let create they
+   * 
+   * @param identityToken Samples Application identity token for manage the rest connections
    * @param providerId Samples provider id
    * @param componentId Samples component id
    * @param sensorId Samples sensor id
@@ -135,7 +159,7 @@ public class SamplesController {
       }
     }
 
-    // If the sensor doesn't exists in the retrieved list, we must create it before publishing the
+    // If the sensor doesn't exists in the retrieved list, we must create it before publish the
     // observations
     if (!existsSensor) {
       // Create a CatalogInputMessage object for retrieve server data
@@ -153,7 +177,7 @@ public class SamplesController {
 
   /**
    * Publish some observations from a sensor
-   *
+   * 
    * @param identityToken Samples Application identity token for manage the rest connections
    * @param providerId Samples provider id
    * @param componentId Samples component id
@@ -181,7 +205,7 @@ public class SamplesController {
 
   /**
    * Create a component list
-   *
+   * 
    * @param componentId Component identifier
    * @return A {@link CatalogComponent} list
    */
@@ -197,7 +221,7 @@ public class SamplesController {
 
   /**
    * Create a sensor list
-   *
+   * 
    * @param componentId The Sample Component Id
    * @param sensorsIdList A list with the sensor ids to create
    * @return A {@link CatalogSensor} list
